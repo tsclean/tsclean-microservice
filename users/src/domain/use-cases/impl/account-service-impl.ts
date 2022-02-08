@@ -1,6 +1,6 @@
 import {Adapter, Service} from "@tsclean/core";
 import {IAccountService} from "@/domain/use-cases/account-service";
-import {AddUserParams, UserModel} from "@/domain/models/user";
+import {AddUserParams} from "@/domain/models/user";
 import {ACCOUNT_REPOSITORY, IAccountRepository} from "@/domain/models/contracts/account-repository";
 
 @Service()
@@ -12,7 +12,7 @@ export class AccountServiceImpl implements IAccountService {
     ) {
     }
 
-    async account(data: AddUserParams): Promise<UserModel> {
-        return
+    async account(data: AddUserParams): Promise<boolean> {
+        return await this.accountRepository.account(data);
     }
 }
