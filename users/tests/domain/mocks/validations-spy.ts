@@ -1,10 +1,11 @@
-import {IValidation} from "@/infrastructure/entry-points/helpers/contract/validation";
+import {IValidationService} from "@/domain/use-cases/validation-service";
 
-export class ValidationsSpy implements IValidation {
+
+export class ValidationsSpy implements IValidationService {
     error: Error = null;
     input: any;
 
-    validate(input: any): Error {
+    async validate(input: any): Promise<Error> {
         this.input = input;
         return this.error
     }
