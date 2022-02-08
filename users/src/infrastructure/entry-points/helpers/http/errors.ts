@@ -40,3 +40,7 @@ export class UnauthorizedError extends Error {
         this.name = 'UnauthorizedError'
     }
 }
+
+export const throwError = (): never => {
+    throw new Error()
+}
