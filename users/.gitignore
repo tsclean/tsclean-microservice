@@ -5,4 +5,5 @@ build/
 .env
 package-lock.json
 dist
-        
+coverage
+globalConfig.json

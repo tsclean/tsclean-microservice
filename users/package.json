@@ -16,6 +16,8 @@
       "module-alias": "^2.2.2"
    },
    "devDependencies": {
+      "@shelf/jest-mongodb": "^2.2.0",
+      "@types/faker": "^6.6.9",
       "@types/jest": "^27.0.1",
       "@types/node": "^16.9.1",
       "@typescript-eslint/eslint-plugin": "^4.33.0",
@@ -26,6 +28,7 @@
       "eslint-plugin-promise": "^5.2.0",
       "eslint-plugin-standard": "^5.0.0",
       "faker": "^6.6.6",
+      "faker2": "^0.5.0",
       "git-commit-msg-linter": "^4.0.7",
       "lint-staged": "^12.3.3",
       "nodemon": "^2.0.9",
