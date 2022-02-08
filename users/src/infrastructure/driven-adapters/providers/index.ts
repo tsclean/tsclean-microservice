@@ -2,8 +2,8 @@ import {ACCOUNT_REPOSITORY} from "@/domain/models/contracts/account-repository";
 import {UserMongooseRepositoryAdapter} from "@/infrastructure/driven-adapters/adapters/orm/mongoose/user-mongoose-repository-adapter";
 import {ACCOUNT_SERVICE} from "@/domain/use-cases/account-service";
 import {AccountServiceImpl} from "@/domain/use-cases/impl/account-service-impl";
-import {VALIDATION} from "@/infrastructure/entry-points/helpers/contract/validation";
-import {ValidationComposite} from "@/infrastructure/entry-points/helpers/validations/validation-composite";
+import {VALIDATION_SERVICE} from "@/domain/use-cases/validation-service";
+import {ValidationServiceImpl} from "@/domain/use-cases/impl/validation-service-impl";
 
 export const adapters = [
     {
@@ -18,7 +18,7 @@ export const services = [
         useClass: AccountServiceImpl
     },
     {
-        provide: VALIDATION,
-        useClass: ValidationComposite
+        provide: VALIDATION_SERVICE,
+        useClass: ValidationServiceImpl
     }
 ];
