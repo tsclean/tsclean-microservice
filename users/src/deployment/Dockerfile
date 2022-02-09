@@ -6,6 +6,10 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN npm install rimraf -g
+
+RUN npm install typescript -g
+
 RUN npm install nodemon -g
 
 COPY . .
@@ -13,4 +17,3 @@ COPY . .
 EXPOSE 9000
 
 CMD ["nodemon", "/dist/index.js"]
-        
