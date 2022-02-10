@@ -1,7 +1,7 @@
-import {IValidationService} from "@/domain/use-cases/validation-service";
+import {IValidationRepository} from "@/domain/models/contracts/validation-repository";
 
 
-export class ValidationsSpy implements IValidationService {
+export class ValidationsSpy implements IValidationRepository {
     error: Error = null;
     input: any;
 
