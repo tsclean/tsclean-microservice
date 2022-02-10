@@ -1,5 +1,6 @@
 import {IValidationRepository} from "@/domain/models/contracts/validation-repository";
 import {MissingParamError} from "@/infrastructure/entry-points/helpers/http/errors";
+import {isEmpty} from "@tsclean/core";
 
 export class ValidationAdapter implements IValidationRepository {
 
@@ -10,7 +11,8 @@ export class ValidationAdapter implements IValidationRepository {
             obj[key] = `${key} is required`
             if (!input[key]) validations.push(obj);
         }
-        return validations;
+
+        if (!isEmpty(validations)) return validations;
     }
 }
 

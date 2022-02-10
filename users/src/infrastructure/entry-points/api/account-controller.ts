@@ -1,7 +1,15 @@
 import {Mapping, Post, Body, Adapter} from "@tsclean/core";
 import {ACCOUNT_SERVICE, IAccountService} from "@/domain/use-cases/account-service";
-import {badRequest, HttpResponse, ok, serverError} from "@/infrastructure/entry-points/helpers/http/status-code";
+import {
+    badRequest,
+    forbidden,
+    HttpResponse,
+    ok,
+    serverError
+} from "@/infrastructure/entry-points/helpers/http/status-code";
 import {IValidationRepository, VALIDATION_REPOSITORY} from "@/domain/models/contracts/validation-repository";
+import {CHECK_EMAIL_REPOSITORY, ICheckEmailRepository} from "@/domain/models/contracts/check-email-repository";
+import {EmailInUseError} from "@/infrastructure/entry-points/helpers/http/errors";
 
 @Mapping('api/v1/account')
 export class AccountController {
@@ -10,7 +18,9 @@ export class AccountController {
         @Adapter(ACCOUNT_SERVICE)
         private readonly accountService: IAccountService,
         @Adapter(VALIDATION_REPOSITORY)
-        private readonly validation: IValidationRepository
+        private readonly validation: IValidationRepository,
+        @Adapter(CHECK_EMAIL_REPOSITORY)
+        private readonly checkEmailRepository: ICheckEmailRepository
     ) {
     }
 
@@ -18,10 +28,17 @@ export class AccountController {
     async accountController(@Body() data: AccountController.Request): Promise<HttpResponse> {
 
         try {
+            console.log(data)
             const error = await this.validation.validate(data);
+            console.log(error)
             if (error) return badRequest(error);
 
             const {name, email, password} = data;
+
+            console.log(data);
+
+            const accountExist = await this.checkEmailRepository.checkEmail(email);
+            if (accountExist) return forbidden(new EmailInUseError());
 
             const user = await this.accountService.account({name, email, password});
 
