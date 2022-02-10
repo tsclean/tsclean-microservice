@@ -28,15 +28,10 @@ export class AccountController {
     async accountController(@Body() data: AccountController.Request): Promise<HttpResponse> {
 
         try {
-            console.log(data)
             const error = await this.validation.validate(data);
-            console.log(error)
             if (error) return badRequest(error);
 
             const {name, email, password} = data;
-
-            console.log(data);
-
             const accountExist = await this.checkEmailRepository.checkEmail(email);
             if (accountExist) return forbidden(new EmailInUseError());
 
