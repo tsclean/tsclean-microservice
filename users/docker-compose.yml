@@ -1,15 +1,42 @@
 version: '3.1'
 services:
-  api:
-    build:
-      context: .
-      dockerfile: ./src/deployment/Dockerfile
+  db:
+    container_name: db
+    networks:
+      - backend
+    image: mongo:latest
+    restart: always
     volumes:
-      - ./:/app
-      - /app/node_modules
+      - /Users/john/Documents/Volumes/Users/mongo:/data/db
     ports:
-      - "9000:9000"
-    environment:
-      - NODE_ENV=development
-      - PORT=9000
-    command: "npm run watch"
+      - "27017:27017"
+    logging:
+      driver: none
+
+  api:
+      container_name: api
+      networks:
+        - backend
+      build:
+        context: .
+        dockerfile: ./src/deployment/Dockerfile
+      depends_on:
+        - db
+      volumes:
+        - ./:/app
+        - /app/node_modules
+      ports:
+        - "9000:9000"
+      environment:
+        - NODE_ENV=development
+        - DATABASE_PUBLIC_URL=db
+        - PORT=9000
+        - MONGO_DEVELOPMENT=mongodb://db:27017/users
+      command: "npm run watch"
+volumes:
+  data01:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge

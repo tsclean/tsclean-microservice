@@ -1,7 +1,7 @@
 import {Mapping, Post, Body, Adapter} from "@tsclean/core";
 import {ACCOUNT_SERVICE, IAccountService} from "@/domain/use-cases/account-service";
-import {IValidationService, VALIDATION_SERVICE} from "@/domain/use-cases/validation-service";
 import {badRequest, HttpResponse, ok, serverError} from "@/infrastructure/entry-points/helpers/http/status-code";
+import {IValidationRepository, VALIDATION_REPOSITORY} from "@/domain/models/contracts/validation-repository";
 
 @Mapping('api/v1/account')
 export class AccountController {
@@ -9,8 +9,8 @@ export class AccountController {
     constructor(
         @Adapter(ACCOUNT_SERVICE)
         private readonly accountService: IAccountService,
-        @Adapter(VALIDATION_SERVICE)
-        private readonly validation: IValidationService
+        @Adapter(VALIDATION_REPOSITORY)
+        private readonly validation: IValidationRepository
     ) {
     }
 
@@ -29,7 +29,6 @@ export class AccountController {
         } catch (err) {
             return serverError(err);
         }
-
     }
 }
 
