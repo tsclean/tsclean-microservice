@@ -1,12 +1,11 @@
-import {IValidationRepository} from "@/domain/models/contracts/validation-repository";
+import {IValidationsRepository} from "@/domain/models/contracts/validations-repository";
 
-
-export class ValidationsSpy implements IValidationRepository {
+export class ValidationsSpy implements IValidationsRepository {
     error: Error = null;
     input: any;
 
-    async validate(input: any): Promise<Error> {
-        this.input = input;
+    async validation(data: any, toValidate: string[]): Promise<any> {
+        this.input = data;
         return this.error
     }
 

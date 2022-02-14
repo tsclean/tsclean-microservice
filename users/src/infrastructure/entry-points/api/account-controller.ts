@@ -7,31 +7,33 @@ import {
     ok,
     serverError
 } from "@/infrastructure/entry-points/helpers/http/status-code";
-import {IValidationRepository, VALIDATION_REPOSITORY} from "@/domain/models/contracts/validation-repository";
 import {CHECK_EMAIL_REPOSITORY, ICheckEmailRepository} from "@/domain/models/contracts/check-email-repository";
 import {EmailInUseError} from "@/infrastructure/entry-points/helpers/http/errors";
+import {IValidationsRepository, VALIDATIONS_REPOSITORY} from "@/domain/models/contracts/validations-repository";
 
 @Mapping('api/v1/account')
 export class AccountController {
-
     constructor(
         @Adapter(ACCOUNT_SERVICE)
         private readonly accountService: IAccountService,
-        @Adapter(VALIDATION_REPOSITORY)
-        private readonly validation: IValidationRepository,
         @Adapter(CHECK_EMAIL_REPOSITORY)
-        private readonly checkEmailRepository: ICheckEmailRepository
+        private readonly checkEmailRepository: ICheckEmailRepository,
+        @Adapter(VALIDATIONS_REPOSITORY)
+        private readonly validationsRepository: IValidationsRepository
     ) {
     }
 
     @Post()
     async accountController(@Body() data: AccountController.Request): Promise<HttpResponse> {
-
         try {
-            const error = await this.validation.validate(data);
-            if (error) return badRequest(error);
+
+            const toValidate: string[] = ["name", "email", "password", "passwordConfirmation"]
 
             const {name, email, password} = data;
+
+            const {errors} = await this.validationsRepository.validation(data, toValidate);
+            if (errors) return badRequest(errors)
+
             const accountExist = await this.checkEmailRepository.checkEmail(email);
             if (accountExist) return forbidden(new EmailInUseError());
 

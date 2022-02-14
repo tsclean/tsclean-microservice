@@ -10,8 +10,8 @@ export class UserMongooseRepositoryAdapter implements IAccountRepository, ICheck
         return account !== null;
     }
 
-    async checkEmail(email: string): Promise<ICheckEmailRepository.Result> {
+    async checkEmail(email: string): Promise<boolean> {
         const account =  await Model.findOne({email});
-        if (account) return true;
+        return account !== null;
     }
 }

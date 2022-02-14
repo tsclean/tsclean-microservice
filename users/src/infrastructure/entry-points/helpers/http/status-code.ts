@@ -5,8 +5,8 @@ export type HttpResponse = {
     body: any;
 }
 
-export const badRequest = (error: Error | any[]): HttpResponse => ({
-    statusCode: 400,
+export const badRequest = (error: any | any[]): HttpResponse => ({
+    statusCode: 422,
     body: error
 })
 
