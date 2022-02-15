@@ -16,7 +16,15 @@ export class ValidatorAdapter implements IValidationsRepository {
             }
         }
 
-        return {errors};
+        return {errors, isValid: ValidatorAdapter.isValid(errors)};
+    }
+
+    private static isValid (value: any): boolean {
+        if (value === undefined || value === null ||
+            typeof value === "object" && Object.keys(value).length === 0 ||
+            typeof value === "string" && value.trim().length === 0) {
+            return true
+        }
     }
 }
 

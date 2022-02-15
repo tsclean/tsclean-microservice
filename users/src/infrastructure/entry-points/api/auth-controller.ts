@@ -22,13 +22,14 @@ export class AuthController {
 
             const {email, password} = data;
 
-            const {errors} = await this.validationsRepository.validation(data, toValidate);
-            if (errors.length > 0) return badRequest(errors);
+            const {errors, isValid} = await this.validationsRepository.validation(data, toValidate);
+            if (!isValid) return badRequest(errors);
 
             const auth = await this.authService.auth({email, password});
 
             return ok(auth);
         } catch (err) {
+            console.log(err)
             return serverError(err);
         }
     }

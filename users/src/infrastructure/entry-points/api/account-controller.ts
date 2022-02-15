@@ -34,8 +34,8 @@ export class AccountController {
 
             const {name, email, password} = data;
 
-            const {errors} = await this.validationsRepository.validation(data, toValidate);
-            if (errors.length > 0) return badRequest(errors)
+            const {errors, isValid} = await this.validationsRepository.validation(data, toValidate);
+            if (!isValid) return badRequest(errors);
 
             const accountExist = await this.checkEmailRepository.checkEmail(email);
             if (accountExist) return forbidden(new EmailInUseError());
