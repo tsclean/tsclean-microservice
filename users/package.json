@@ -10,6 +10,7 @@
    },
    "dependencies": {
       "@tsclean/core": "^1.7.0",
+      "bcrypt": "^5.0.1",
       "dotenv": "^10.0.0",
       "helmet": "^4.6.0",
       "module-alias": "^2.2.2",
@@ -18,6 +19,7 @@
    },
    "devDependencies": {
       "@shelf/jest-mongodb": "^2.2.0",
+      "@types/bcrypt": "^5.0.0",
       "@types/faker": "^6.6.9",
       "@types/jest": "^27.0.1",
       "@types/mongoose": "^5.11.97",
