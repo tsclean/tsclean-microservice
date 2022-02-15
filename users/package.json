@@ -9,10 +9,14 @@
       "test": "jest --passWithNoTests --coverage --runInBand --no-cache"
    },
    "dependencies": {
+      "-": "0.0.1",
       "@tsclean/core": "^1.7.0",
+      "@types/jsonwebtoken": "^8.5.8",
+      "D": "^1.0.0",
       "bcrypt": "^5.0.1",
       "dotenv": "^10.0.0",
       "helmet": "^4.6.0",
+      "jsonwebtoken": "^8.5.1",
       "module-alias": "^2.2.2",
       "mongoose": "^6.0.10",
       "validator": "^13.7.0"
