@@ -10,6 +10,7 @@ import {
 import {CHECK_EMAIL_REPOSITORY, ICheckEmailRepository} from "@/domain/models/contracts/check-email-repository";
 import {EmailInUseError} from "@/infrastructure/entry-points/helpers/http/errors";
 import {IValidationsRepository, VALIDATIONS_REPOSITORY} from "@/domain/models/contracts/validations-repository";
+import {AUTH_SERVICE, IAuthService} from "@/domain/use-cases/auth-service";
 
 @Mapping('api/v1/account')
 export class AccountController {
@@ -19,7 +20,9 @@ export class AccountController {
         @Adapter(CHECK_EMAIL_REPOSITORY)
         private readonly checkEmailRepository: ICheckEmailRepository,
         @Adapter(VALIDATIONS_REPOSITORY)
-        private readonly validationsRepository: IValidationsRepository
+        private readonly validationsRepository: IValidationsRepository,
+        @Adapter(AUTH_SERVICE)
+        private readonly authService: IAuthService
     ) {
     }
 
@@ -32,14 +35,16 @@ export class AccountController {
             const {name, email, password} = data;
 
             const {errors} = await this.validationsRepository.validation(data, toValidate);
-            if (errors) return badRequest(errors)
+            if (errors.length > 0) return badRequest(errors)
 
             const accountExist = await this.checkEmailRepository.checkEmail(email);
             if (accountExist) return forbidden(new EmailInUseError());
 
-            const user = await this.accountService.account({name, email, password});
+            await this.accountService.account({name, email, password});
 
-            return ok(user)
+            const auth = await this.authService.auth({email, password});
+
+            return ok(auth)
         } catch (err) {
             return serverError(err);
         }

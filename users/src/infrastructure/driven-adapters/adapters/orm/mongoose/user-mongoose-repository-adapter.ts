@@ -22,7 +22,7 @@ export class UserMongooseRepositoryAdapter implements IAccountRepository,
 
     async loadByEmail(email: string): Promise<ILoadAccountByEmailRepository.Result> {
         const account = await Model.findOne({email});
-        return account && this.map(account);
+        return account && account['_doc'];
     }
 
     async updateToken(id: string | number, token: string): Promise<void> {

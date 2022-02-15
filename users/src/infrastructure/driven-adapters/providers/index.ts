@@ -10,6 +10,10 @@ import {BcryptAdapter} from "@/infrastructure/driven-adapters/adapters/bcrypt-ad
 import {HASH_COMPARE_REPOSITORY} from "@/domain/models/contracts/hash-compare-repository";
 import {ENCRYPT_REPOSITORY} from "@/domain/models/contracts/encrypt-repository";
 import {JwtAdapter} from "@/infrastructure/driven-adapters/adapters/jwt-adapter";
+import {AUTH_SERVICE} from "@/domain/use-cases/auth-service";
+import {AuthServiceImpl} from "@/domain/use-cases/impl/auth-service-impl";
+import {UPDATE_TOKEN_REPOSITORY} from "@/domain/models/contracts/update-access-token-repository";
+import {LOAD_ACCOUNT_BY_EMAIL_REPOSITORY} from "@/domain/models/contracts/load-account-by-email-repository";
 
 export const adapters = [
     {
@@ -35,6 +39,14 @@ export const adapters = [
     {
         provide: ENCRYPT_REPOSITORY,
         useClass: JwtAdapter
+    },
+    {
+        provide: UPDATE_TOKEN_REPOSITORY,
+        useClass: UserMongooseRepositoryAdapter
+    },
+    {
+        provide: LOAD_ACCOUNT_BY_EMAIL_REPOSITORY,
+        useClass: UserMongooseRepositoryAdapter
     }
 ];
 
@@ -42,5 +54,9 @@ export const services = [
     {
         provide: ACCOUNT_SERVICE,
         useClass: AccountServiceImpl
+    },
+    {
+        provide: AUTH_SERVICE,
+        useClass: AuthServiceImpl
     }
 ];
