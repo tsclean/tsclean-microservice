@@ -1,8 +1,22 @@
-import faker from 'faker2'
+import faker from '@faker-js/faker'
 import {AddUserParams} from "@/domain/models/user";
+import {IAuthService} from "@/domain/use-cases/auth-service";
 
 export const mockAddAccountParams = (): AddUserParams => ({
-    name: faker.Name.findName(),
-    email: faker.Internet.email(),
-    password: '123456'
+    name: faker.name.findName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
 })
+
+export class AuthenticationSpy implements IAuthService {
+    params: IAuthService.Params
+    result = {
+        accessToken: faker.datatype.uuid(),
+        name: faker.name.findName()
+    }
+
+    async auth (params: IAuthService.Params): Promise<IAuthService.Result> {
+        this.params = params
+        return this.result
+    }
+}

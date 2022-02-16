@@ -17,8 +17,6 @@ export class AccountController {
     constructor(
         @Adapter(ACCOUNT_SERVICE)
         private readonly accountService: IAccountService,
-        @Adapter(CHECK_EMAIL_REPOSITORY)
-        private readonly checkEmailRepository: ICheckEmailRepository,
         @Adapter(VALIDATIONS_REPOSITORY)
         private readonly validationsRepository: IValidationsRepository,
         @Adapter(AUTH_SERVICE)
@@ -34,13 +32,11 @@ export class AccountController {
 
             const {name, email, password} = data;
 
-            const {errors, isValid} = await this.validationsRepository.validation(data, toValidate);
-            if (!isValid) return badRequest(errors);
+            const validation = await this.validationsRepository.validation(data, toValidate);
+            if (!validation?.isValid && validation?.errors) return badRequest(validation.errors);
 
-            const accountExist = await this.checkEmailRepository.checkEmail(email);
+            const accountExist = await this.accountService.account({name, email, password});
             if (accountExist) return forbidden(new EmailInUseError());
-
-            await this.accountService.account({name, email, password});
 
             const auth = await this.authService.auth({email, password});
 

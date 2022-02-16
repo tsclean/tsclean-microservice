@@ -1,16 +1,21 @@
-import faker from 'faker2';
+import faker from '@faker-js/faker'
 import {AccountController} from "@/infrastructure/entry-points/api/account-controller";
-import {AccountServiceSpy} from "@/tests/domain/mocks";
+import {AccountServiceSpy, AuthenticationSpy} from "@/tests/domain/mocks";
 import {ValidationsSpy} from "@/tests/domain/mocks/validations-spy";
-import {MissingParamError, ServerError, throwError} from "@/infrastructure/entry-points/helpers/http/errors";
-import {badRequest, ok, serverError} from "@/infrastructure/entry-points/helpers/http/status-code";
+import {
+    EmailInUseError,
+    MissingParamError,
+    ServerError,
+    throwError
+} from "@/infrastructure/entry-points/helpers/http/errors";
+import {badRequest, forbidden, ok, serverError} from "@/infrastructure/entry-points/helpers/http/status-code";
 import {CheckAccountByEmailRepositorySpy} from "@/tests/domain/mocks/check-account-spy";
 
 const mockRequest = (): AccountController.Request => {
-    const password = '123456';
+    const password = faker.internet.password();
     return  {
-        name:  "Theodora Mills",
-        email:  "Andrew@kurt.com",
+        name:  faker.name.findName(),
+        email:  faker.internet.email(),
         password,
         passwordConfirmation: password
     }
@@ -20,16 +25,17 @@ type SutTypes = {
     sut: AccountController;
     accountServiceSpy: AccountServiceSpy;
     validationSpy: ValidationsSpy;
-    checkByEmail: CheckAccountByEmailRepositorySpy;
+    authenticationSpy: AuthenticationSpy;
 }
 
 const makeSut = (): SutTypes => {
     const accountServiceSpy = new AccountServiceSpy();
     const validationSpy = new ValidationsSpy();
-    const checkByEmail = new CheckAccountByEmailRepositorySpy();
-    const sut = new AccountController(accountServiceSpy, checkByEmail, validationSpy);
+
+    const authenticationSpy = new AuthenticationSpy();
+    const sut = new AccountController(accountServiceSpy, validationSpy, authenticationSpy);
     return {
-        sut, accountServiceSpy, validationSpy, checkByEmail
+        sut, accountServiceSpy, validationSpy, authenticationSpy
     }
 }
 
@@ -53,24 +59,16 @@ describe('Account controller', () => {
         })
     });
 
-    it('should return  200 if data is valid', async function () {
-        const {sut, accountServiceSpy} = makeSut();
-        const response = await sut.accountController({name:"name", email:"email@doe.com", password:"123456", passwordConfirmation:"123456"});
-        const result = {
-            "body": true,
-            "statusCode": response.statusCode = 200
-        }
-        expect(result).toEqual(ok(accountServiceSpy.result));
+    it('should return 403 if validation returns an error', async function () {
+        const {sut} = makeSut();
+        const response = await sut.accountController(mockRequest());
+        expect(response).toEqual(forbidden(new EmailInUseError()));
     });
 
-    it('should return 400 if validation returns an error', async function () {
-        const {sut, validationSpy} = makeSut();
-        validationSpy.error = new MissingParamError("name");
-        const response = await sut.accountController({name:"", email:"", password:"", passwordConfirmation:""});
-        const result = {
-            "body": "{\"name\":\"MissingParamError\"}",
-            "statusCode": response.statusCode = 422
-        }
-        expect(result).toEqual(badRequest(JSON.stringify(validationSpy.error)));
+    it('should return 200 if data is valid', async function () {
+        const {sut, authenticationSpy, accountServiceSpy} = makeSut();
+        accountServiceSpy.result = false;
+        const response = await sut.accountController(mockRequest());
+        expect(response).toEqual(ok(authenticationSpy.result))
     });
 })

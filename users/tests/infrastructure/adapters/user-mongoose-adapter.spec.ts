@@ -31,5 +31,4 @@ describe('User mongoose adapter', () => {
             expect(account).toBeTruthy();
         });
     })
-
 })

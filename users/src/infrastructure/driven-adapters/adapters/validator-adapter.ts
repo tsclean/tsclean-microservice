@@ -3,7 +3,8 @@ import {IValidationsRepository} from "@/domain/models/contracts/validations-repo
 
 export class ValidatorAdapter implements IValidationsRepository {
 
-    async validation(data: any, toValidate: string[], file?: any): Promise<any> {
+    async validation(data: any, toValidate: string[], file?: any): Promise<ValidatorAdapter.Response> {
+
         let errors = {};
 
         if (toValidate.includes("email") && !validator.isEmail(data.email)) {
@@ -16,15 +17,25 @@ export class ValidatorAdapter implements IValidationsRepository {
             }
         }
 
-        return {errors, isValid: ValidatorAdapter.isValid(errors)};
+        return {
+            errors,
+            isValid: await ValidatorAdapter.isValid(errors)
+        };
     }
 
-    private static isValid (value: any): boolean {
+    private static async isValid(value: any): Promise<boolean> {
         if (value === undefined || value === null ||
             typeof value === "object" && Object.keys(value).length === 0 ||
             typeof value === "string" && value.trim().length === 0) {
             return true
         }
+    }
+}
+
+export namespace ValidatorAdapter {
+    export type Response = {
+        errors?: {};
+        isValid: boolean;
     }
 }
 
