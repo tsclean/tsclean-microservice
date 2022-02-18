@@ -3,15 +3,6 @@ import {IHashRepository} from "@/domain/models/contracts/hash-repository";
 import {IAccountRepository} from "@/domain/models/contracts/account-repository";
 
 export class AccountServiceSpy implements IAccountRepository {
-
-    // private password: string  = '123456';
-    //
-    // params: AddUserParams = {
-    //     name:  faker.name.findName(),
-    //     email:  faker.internet.email(),
-    //     password: this.password
-    // }
-
     params: IAccountRepository.Params;
     result = true;
 
