@@ -1,5 +1,11 @@
 import {Mapping, Get, Post, Body, Adapter} from "@tsclean/core";
-import {badRequest, HttpResponse, ok, serverError} from "@/infrastructure/entry-points/helpers/http/status-code";
+import {
+    badRequest,
+    HttpResponse,
+    ok,
+    serverError,
+    unauthorized
+} from "@/infrastructure/entry-points/helpers/http/status-code";
 import {IValidationsRepository, VALIDATIONS_REPOSITORY} from "@/domain/models/contracts/validations-repository";
 import {AUTH_SERVICE, IAuthService} from "@/domain/use-cases/auth-service";
 
@@ -22,14 +28,15 @@ export class AuthController {
 
             const {email, password} = data;
 
-            const {errors, isValid} = await this.validationsRepository.validation(data, toValidate);
-            if (!isValid) return badRequest(errors);
+            const validation = await this.validationsRepository.validation(data, toValidate);
+            if (!validation?.isValid && validation?.errors) return badRequest(validation.errors);
 
             const auth = await this.authService.auth({email, password});
 
+            if (!auth) return unauthorized();
+
             return ok(auth);
         } catch (err) {
-            console.log(err)
             return serverError(err);
         }
     }
