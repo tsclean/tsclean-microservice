@@ -71,4 +71,16 @@ describe('Account controller', () => {
         const response = await sut.accountController(mockRequest());
         expect(response).toEqual(ok(authenticationSpy.result))
     });
+
+    it("Should retruns an error when the name is missing", async function () {
+        const {sut, validationSpy, accountServiceSpy} = makeSut();
+        accountServiceSpy.result = false;
+        validationSpy.error = new MissingParamError(faker.random.word())
+        const httpResponse = await sut.accountController(mockRequest())
+        const result = {
+            "body": "{\"name\":\"MissingParamError\"}",
+            "statusCode": httpResponse.statusCode = 422
+        }
+        expect(result).toEqual(badRequest(JSON.stringify(validationSpy.error)))
+    });
 })

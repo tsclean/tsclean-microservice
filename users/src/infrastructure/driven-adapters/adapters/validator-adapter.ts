@@ -19,11 +19,11 @@ export class ValidatorAdapter implements IValidationsRepository {
 
         return {
             errors,
-            isValid: await ValidatorAdapter.isValid(errors)
+            isValid: await this.isValid(errors)
         };
     }
 
-    private static async isValid(value: any): Promise<boolean> {
+    async isValid(value: any): Promise<boolean> {
         if (value === undefined || value === null ||
             typeof value === "object" && Object.keys(value).length === 0 ||
             typeof value === "string" && value.trim().length === 0) {
