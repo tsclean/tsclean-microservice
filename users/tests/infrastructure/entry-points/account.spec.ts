@@ -72,7 +72,7 @@ describe('Account controller', () => {
         expect(response).toEqual(ok(authenticationSpy.result))
     });
 
-    it("Should retruns an error when the name is missing", async function () {
+    it("Should returns an error when the name is missing", async function () {
         const {sut, validationSpy, accountServiceSpy} = makeSut();
         accountServiceSpy.result = false;
         validationSpy.error = new MissingParamError(faker.random.word())
